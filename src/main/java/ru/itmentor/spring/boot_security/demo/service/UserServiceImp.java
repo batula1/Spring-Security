@@ -72,28 +72,29 @@ public class UserServiceImp implements UserService, UserDetailsService {
     @Transactional
     @Override
     public void updateUser(long id, User updatedUser) {
-        userDao.updateUser(id,updatedUser);
+        User user = getUserById(id);
+        if(user != null){
+            user.setRoles(updatedUser.getRoles());
+            user.setEmail(updatedUser.getEmail());
+            user.setName(updatedUser.getName());
+            user.setLastname(updatedUser.getLastname());
+            user.setAge(updatedUser.getAge());
+            user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        }
     }
 
+
     @Override
-    public List<User> findByLogin(String login) {
+    public User findByLogin(String login) {
         return userDao.findByLogin(login);
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        List<User> users = findByLogin(email);
-
-        if (users.isEmpty()) {
-            throw new UsernameNotFoundException(String.format("User '%s' not found", email));
+    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+        User user = findByLogin(login);
+        if (user == null) {
+            throw new UsernameNotFoundException(String.format("User '%s' not found", login));
         }
-
-        User user = users.get(0); // Выберите пользователя, который подходит вашим требованиям
-
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                user.getRoles()
-        );
+        return user;
     }
 }

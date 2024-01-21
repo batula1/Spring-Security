@@ -17,11 +17,8 @@ import java.util.Set;
 public class UserDaoImp implements UserDao {
     @PersistenceContext
     private EntityManager entityManager;
-    private final PasswordEncoder passwordEncoder;
 
-    public UserDaoImp(@Lazy PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
+
 
     @Override
     public List<User> getUsers() {
@@ -63,23 +60,10 @@ public class UserDaoImp implements UserDao {
 
 
     @Override
-    public void updateUser(long id, User updatedUser) {
-        User user = getUserById(id);
-        if(user != null){
-            user.setRoles(updatedUser.getRoles());
-            user.setEmail(updatedUser.getEmail());
-            user.setName(updatedUser.getName());
-            user.setLastname(updatedUser.getLastname());
-            user.setAge(updatedUser.getAge());
-            user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
-        }
-    }
-
-    @Override
-    public List<User> findByLogin(String login) {
-        String query = "SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.roles WHERE u.email = :login";
+    public User findByLogin(String login) {
+        String query = "SELECT u FROM User u LEFT JOIN FETCH u.roles WHERE u.email = :login";
         return entityManager.createQuery(query, User.class)
                 .setParameter("login", login)
-                .getResultList();
+                .getSingleResult();
     }
 }

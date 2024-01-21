@@ -15,6 +15,5 @@ public interface UserDao {
     User getUserById(long id);
     Role getRoleById(long id);
     Set<Role> getRoles();
-    void updateUser(long id, User updatedUser);
-    List<User> findByLogin(String login);
+    User findByLogin(String login);
 }

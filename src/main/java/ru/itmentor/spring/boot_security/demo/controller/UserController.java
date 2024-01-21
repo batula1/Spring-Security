@@ -28,16 +28,7 @@ public class UserController {
     @GetMapping
     public String getUserInfo(ModelMap model, Principal principal) {
         String login = principal.getName();
-        List<User> users = userService.findByLogin(login);
-
-        if (users.isEmpty()) {
-            // Обработка ситуации, когда пользователя с таким логином нет
-            return "error";
-        }
-
-        // Ваша логика обработки списка пользователей, например, выбор первого пользователя
-        User user = users.get(0);
-
+        User user = userService.findByLogin(login);
         model.addAttribute("user", user);
         return "user";
     }
